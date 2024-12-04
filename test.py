@@ -12,6 +12,3 @@ with open("src/email.html", "r") as f:
     html = f.read()
 
 mail.send_html(["mail@example.com"], "test", text, html)
-
-mail.send(["mail@example.com"], "test")
-mail.send(["mail@example.com"], "test")
