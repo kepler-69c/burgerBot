@@ -1,16 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head></head>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {
+      --text: #000;
+      --white: #fff;
+      --bg: #ebebeb;
+      --bg-between: #f7f7f7;
+    }
+
+    :root {
+      font-family: Tahoma, sans-serif;
+      color: var(--text);
+      background-color: var(--white);
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .title {
+      background-color: var(--bg);
+      padding: 2rem;
+      padding-left: 2rem;
+      font-weight: bold;
+      font-size: 2.5rem;
+    }
+
+    .subtitle {
+      padding: .5rem;
+      padding-left: 2rem;
+      font-size: 1.5rem;
+      background-color: var(--bg);
+    }
+
+    .grid,
+    .burger-row {
+      display: flex;
+      flex-direction: row;
+      padding: .5rem 2rem;
+      gap: 1rem;
+      flex-wrap: wrap;;
+    }
+
+    .burger-row {
+      .burger-img {
+        width: 24%;
+        height: auto;
+      }
+
+      .burger-container {
+
+        .heading,
+        p {
+          margin: 0;
+        }
+
+        .heading {
+          font-weight: bold;
+          font-size: 2.5rem;
+        }
+
+        p {
+          font-size: 1.5rem;
+        }
+      }
+    }
+
+    .card {
+      width: 24%;
+      position: relative;
+      background-color: var(--bg-between);
+      display: flex;
+      flex-direction: column;
+
+      .dish-img {
+        width: 100%;
+        height: auto;
+      }
+
+      .dish-container {
+        padding: .5rem 1rem 1rem 1rem;
+
+        .heading,
+        p {
+          margin: 0;
+        }
+
+        .heading {
+          font-weight: bold;
+          font-size: 1.5rem;
+        }
+      }
+    }
+
+
+    @media only screen and (max-width: 1200px) {
+      .card, .burger-row .burger-img {
+        width: 32%;
+      }
+    }
+
+    @media only screen and (max-width: 900px) {
+      .card, .burger-row .burger-img {
+        width: 49%;
+      }
+    }
+
+    @media only screen and (max-width: 700px) {
+      .card, .burger-row .burger-img {
+        width: 100%;
+      }
+
+      .burger-row {
+        gap: 0;
+        padding-bottom: 2rem;
+      }
+    }
+  </style>
+</head>
 
 <body>
-    <h1>Polymensa</h1>
-    <p>Hi, here is your Polymensa menu for the day</p>
-    <ul>
-        <li>Breakfast: hj</li>
-        <li>Lunch: hj</li>
-        <li>Dinner: hjk</li>
-    </ul>
+  <div class="title">
+    No burgers today 😿
+  </div>
+  <div class="burger-row">
+    <img src="https://idapps.ethz.ch/cookpit-pub-services/v1/images/27450?client-id=ethz-monitor" alt="eggs"
+      class="burger-img">
+    <div class="burger-container">
+      <span class="heading">Burger</span>
+      <p>tomatoes, lettuce, cheese</p>
+    </div>
+  </div>
+  <div class="subtitle">There are some other nice dishes, though:</div>
+  <div class="grid">
+    <div class="card">
+      <img src="https://idapps.ethz.ch/cookpit-pub-services/v1/images/27450?client-id=ethz-monitor" alt="eggs"
+        class="dish-img">
+      <div class="dish-container">
+        <span class="heading">VEGAN CEVAPCICI ON DÜRÜM TORTILLA</span>
+        <p>Tomato sauce | fried onions | garlic | olives | grated cheese | salad</p>
+      </div>
+    </div>
+    <div class="card">
+      <img src="https://idapps.ethz.ch/cookpit-pub-services/v1/images/27450?client-id=ethz-monitor" alt="eggs"
+        class="dish-img">
+      <div class="dish-container">
+        <span class="heading">Lunch</span>
+        <p>lorem ipsum</p>
+      </div>
+    </div>
+    <div class="card">
+      <img src="https://idapps.ethz.ch/cookpit-pub-services/v1/images/27450?client-id=ethz-monitor" alt="eggs"
+        class="dish-img">
+      <div class="dish-container">
+        <span class="heading">VEGAN CEVAPCICI ON DÜRÜM TORTILLA</span>
+        <p>Tomato sauce | fried onions | garlic | olives | grated cheese | salad</p>
+      </div>
+    </div>
+    <div class="card">
+      <img src="https://idapps.ethz.ch/cookpit-pub-services/v1/images/27450?client-id=ethz-monitor" alt="eggs"
+        class="dish-img">
+      <div class="dish-container">
+        <span class="heading">VEGAN CEVAPCICI ON DÜRÜM TORTILLA</span>
+        <p>Tomato sauce | fried onions | garlic | olives | grated cheese | salad</p>
+      </div>
+    </div>
+    <div class="card">
+      <img src="https://idapps.ethz.ch/cookpit-pub-services/v1/images/27450?client-id=ethz-monitor" alt="eggs"
+        class="dish-img">
+      <div class="dish-container">
+        <span class="heading">VEGAN CEVAPCICI ON DÜRÜM TORTILLA</span>
+        <p>Tomato sauce | fried onions | garlic | olives | grated cheese | salad</p>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>

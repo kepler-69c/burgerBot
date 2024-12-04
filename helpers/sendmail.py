@@ -31,10 +31,10 @@ class GmailSend:
             return False, state
 
     def send_html(self, to: list, subject: str, email_text: str, email_html: str) -> (bool, dict):
+        # https://stackoverflow.com/a/882770/16490381
         msg = MIMEMultipart('alternative')
         msg['Subject'] = subject
         msg['From'] = self.email
-        # msg['To'] = to
 
         part1 = MIMEText(email_text, 'plain')
         part2 = MIMEText(email_html, 'html')
