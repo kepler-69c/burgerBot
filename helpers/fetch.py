@@ -76,6 +76,7 @@ class Polymensa:
                     "type": dish["name"],
                     "name": dish["meal"]["name"],
                     "description": dish["meal"]["description"],
+                    "image": dish["meal"]["image-url"],
                 })
 
         self.request["state"] = RequestState.PARSED
