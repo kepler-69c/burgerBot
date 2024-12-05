@@ -1,15 +1,14 @@
+from flask import Flask, jsonify
 import os
 import json
 from helpers.fetch import Polymensa
 from helpers.sendmail import BurgerSend
 
+app = Flask(__name__)
 
-from http.server import BaseHTTPRequestHandler
-
-class handler(BaseHTTPRequestHandler):
-
-    def do_GET(self):
-
+@app.route("/")
+def send_email():
+    try:
         email = os.getenv("EMAIL")
         password = os.getenv("PASSWORD")
         recipients = os.getenv("RECIPIENTS").split(",")
@@ -32,8 +31,6 @@ class handler(BaseHTTPRequestHandler):
         mail = BurgerSend(email, password)
         mail.send(recipients, meals)
 
-        self.send_response(200)
-        self.send_header('Content-type','application/json')
-        self.end_headers()
-        self.wfile.write(json.dumps(meals).encode())
-        return
+        return jsonify({"status": "Email sent successfully!", "meals": meals}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
