@@ -2,13 +2,13 @@
     "redirects": [
         {
             "source": "/",
-            "destination": "/api"
+            "destination": "/api/hello"
         }
     ],
     "crons": [
         {
             "path": "/api",
-            "schedule": "30 22 * * *"
+            "schedule": "50 21 * * *"
         }
     ]
 }
