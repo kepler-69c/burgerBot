@@ -5,6 +5,7 @@ from helpers.sendmail import BurgerSend
 
 email = os.getenv("EMAIL")
 password = os.getenv("PASSWORD")
+recipients = os.getenv("RECIPIENTS").split(",")
 
 api = {
     # id which indicates which eth service is requesting the data
@@ -22,4 +23,4 @@ mensa = Polymensa(**api)
 meals = mensa.get_dishes()
 
 mail = BurgerSend(email, password)
-mail.send(["sendto@gmail.com"], meals)
+mail.send(recipients, meals)
