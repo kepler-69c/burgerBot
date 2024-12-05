@@ -7,6 +7,7 @@ from helpers.sendmail import BurgerSend
 app = Flask(__name__)
 
 @app.route("/")
+@app.route("/api")
 def send_email():
     try:
         email = os.getenv("EMAIL")
