@@ -70,63 +70,43 @@ class BurgerSend(GmailSend):
             else:
                 dishes += self._dish_card(dish)
 
-        # return super().send(to, email_text)
-        with open("src/template.html", "r") as f:
-            html = f.read()
-
-        body = f"""
-        {self._title()}
-        {self.burger_block() if self.has_burger else ""}
-        {self._subtitle()}
-        <div class="grid">
-            {dishes}
-        </div>
+        html = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head></head>
+        <body>
+            <h1>{self._title()}</h1>
+            {self._burger_block() if self.has_burger else ""}
+            <h2>{self._subtitle()}</h2>
+            <ul>
+                {dishes}
+            </ul>
+        </body>
+        </html>
         """
-
-        html = html.replace("[[email_body]]", body)
         # return html
         return super().send_html(to, "Polymensa", "", html)
 
     def _title(self) -> str:
         if self.has_burger:
-            phrase = "Lunch plans sorted: Go get that burger!"
+            return "Lunch plans sorted: Go get that burger!"
         else:
-            phrase = "No burgers today 😿"
-
-        html = f'<div class="title">{phrase}</div>'
-        return html
+            return "No burgers today 😿"
 
     def _subtitle(self) -> str:
         if self.has_burger:
-            phrase = "The other dishes are not even worth mentioning:"
+            return "The other dishes are not even worth mentioning:"
         else:
-            phrase = "There are some other nice dishes, though:"
-
-        html = f'<div class="subtitle">{phrase}</div>'
-        return html
+            return "There are some other nice dishes, though:"
 
     def _dish_card(self, dish: dict) -> str:
         html = f"""
-        <div class="card">
-            <img src="{dish["image"]}?client-id=ethz-monitor" alt="{dish["type"]}"
-                class="dish-img">
-            <div class="dish-container">
-                <span class="heading">{dish["name"]}</span>
-                <p>{dish["description"]}</p>
-            </div>
-        </div>
+        <li><p><strong>{dish["name"]}</strong><br>{dish["description"]}</p></li>
         """
         return html
-    
-    def burger_block(self) -> str:
+
+    def _burger_block(self) -> str:
         html = f"""
-        <div class="burger-row">
-            <img src="{self.burger["image"]}?client-id=ethz-monitor" alt="{self.burger["type"]}"
-                class="burger-img">
-            <div class="burger-container">
-                <span class="heading">Burger</span>
-                <p>{self.burger["description"]}</p>
-            </div>
-        </div>
+        <p><strong>{self.burger["name"]}</strong><br>{self.burger["description"]}</p>
         """
         return html
