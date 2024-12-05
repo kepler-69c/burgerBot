@@ -19,14 +19,14 @@ def send_email():
 
         api = {
             # id which indicates which eth service is requesting the data
-            client_id: "ethz-wcms",  # TODO: am I allowed to use this id?
+            "client_id": "ethz-wcms",  # TODO: am I allowed to use this id?
             # language; possible: ["en", "de"]
-            lang: "en",
+            "lang": "en",
             # idk
-            rsfirst: 0,
-            rssize: 1,
+            "rsfirst": 0,
+            "rssize": 1,
             # facility number
-            facility: 9,
+            "facility": 9,
         }
 
         mensa = Polymensa(**api)
@@ -37,4 +37,9 @@ def send_email():
 
         return jsonify({"status": "Email sent successfully!", "meals": meals}), 200
     except Exception as e:
+        raise e
         return jsonify({"error": str(e)}), 500
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
