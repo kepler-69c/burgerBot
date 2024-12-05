@@ -1,4 +1,10 @@
 {
+    "routes": [
+        {
+            "src": "/.*",
+            "dest": "api/main.py"
+        }
+    ],
     "crons": [
         {
             "path": "/mail",
