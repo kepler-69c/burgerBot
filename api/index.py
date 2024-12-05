@@ -13,9 +13,9 @@ app = Flask(__name__)
 @app.route("/api")
 def send_email():
     try:
-        email = os.environ.get("EMAIL")
-        password = os.environ.get("PASSWORD")
-        recipients = os.environ.get("RECIPIENTS").split(",")
+        email = os.getenv("EMAIL")
+        password = os.getenv("PASSWORD")
+        recipients = os.getenv("RECIPIENTS").split(",")
 
         api = {
             # id which indicates which eth service is requesting the data
