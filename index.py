@@ -3,8 +3,13 @@ import json
 from helpers.fetch import Polymensa
 from helpers.sendmail import BurgerSend
 
-def handler(request):
-    try:
+
+from http.server import BaseHTTPRequestHandler
+
+class handler(BaseHTTPRequestHandler):
+
+    def do_GET(self):
+
         email = os.getenv("EMAIL")
         password = os.getenv("PASSWORD")
         recipients = os.getenv("RECIPIENTS").split(",")
@@ -27,13 +32,8 @@ def handler(request):
         mail = BurgerSend(email, password)
         mail.send(recipients, meals)
 
-        return {
-            "statusCode": 200,
-            "body": json.dumps({"message": "Cron job executed successfully!"}),
-        }
-
-    except Exception as e:
-        return {
-            "statusCode": 500,
-            "body": json.dumps({"error": str(e)}),
-        }
+        self.send_response(200)
+        self.send_header('Content-type','application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps(meals).encode())
+        return
