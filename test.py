@@ -1,14 +1,16 @@
-from helpers.sendmail import GmailSend
+import os
 import tomllib
+from helpers.sendmail import GmailSend
 
-with open("settings.toml", "rb") as f:
-    data = tomllib.load(f)
-email = data["email"]
+email = os.getenv("EMAIL")
+password = os.getenv("PASSWORD")
+recipients = os.getenv("RECIPIENTS").split(",")
 
-mail = GmailSend(email["email"], email["password"])
+mail = GmailSend(email, password)
 
-text = "This is your polymensa menu for the day:\n\nBreakfast: {}\nLunch: {}\nDinner: {}".format("hj", "hj", "hjk")
+text = "This is your polymensa menu for the day:\n\nBreakfast: {}\nLunch: {}\nDinner: {}".format(
+    "hj", "hj", "hjk")
 with open("src/email.html", "r") as f:
     html = f.read()
 
-mail.send_html(["mail@example.com"], "test", text, html)
+mail.send_html(recipients, "test", text, html)
