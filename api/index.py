@@ -41,6 +41,7 @@ def send_email():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/hello")
 @app.route("/api/hello")
 def hello():
     return "Hello, World!", 200
