@@ -29,6 +29,11 @@ def send_email():
             "facility": 9,
         }
 
+        # don't send emails on weekends
+        weekday = datetime.date.today().weekday()
+        if weekday in [6,7]:
+            return jsonify({"status": "It's the weekend, no burgers today!"}), 200
+
         mensa = Polymensa(**api)
         meals = mensa.get_dishes()
 
