@@ -13,6 +13,7 @@ class RequestState(Enum):
 
 class Polymensa:
     requestDay: str = None
+    requestNextDay: str = None
     requestWeekday: str = None
     api: dict = None
     request = {
@@ -40,6 +41,8 @@ class Polymensa:
         if today.weekday() < 5:
             self.requestDay = today
             self.requestWeekday = today.weekday()
+            self.requestNextDay = today + datetime.timedelta(days=7)
+        # TODO: not needed anymore, since the script doesn't run on weekends
         else:
             daysUntilMonday = 7 - today.weekday()
             self.requestDay = today + datetime.timedelta(days=daysUntilMonday)
@@ -50,7 +53,7 @@ class Polymensa:
         parameters = (f"client-id={self.api['client_id']}&lang={self.api['lang']}"
                       f"&rs-first={self.api['rsfirst']}&rs-size={self.api['rssize']}"
                       # date in format "YYYY-MM-DD". The api always return the data for the whole week, so the dates are kind of irrelevant
-                      f"&valid-after={self.requestDay}&valid-before={self.requestDay}&facility={self.api['facility']}")
+                      f"&valid-after={self.requestDay}&valid-before={self.requestNextDay}&facility={self.api['facility']}")
         url = "https://idapps.ethz.ch/cookpit-pub-services/v1/weeklyrotas?"+parameters
         response = requests.get(url)
 
@@ -65,6 +68,9 @@ class Polymensa:
         # if there was an error, exit
         if self.request["state"] == RequestState.ERROR:
             return
+
+        # with open("dishes.json", "w") as f:
+        #     f.write(json.dumps(self.request["data"]))
 
         # [0] since we're only requesting a single week, and basically all restaurants only have a single opening time
         daymeals = self.request["data"]["weekly-rota-array"][0]["day-of-week-array"][self.requestWeekday]["opening-hour-array"][0]["meal-time-array"]
