@@ -1,0 +1,14 @@
+{
+    "redirects": [
+        {
+            "source": "/",
+            "destination": "/api/hello"
+        }
+    ],
+    "crons": [
+        {
+            "path": "/api",
+            "schedule": "00 05 * * 1-5"
+        }
+    ]
+}
