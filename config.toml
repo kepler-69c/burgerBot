@@ -1,0 +1,22 @@
+
+[api]
+# id which indicates which ETHZ service is requesting the data
+client_id = "ethz-wcms"  # TODO: am I allowed to use this id?
+# language;
+# possible: ["en", "de"]
+lang = "en"
+# idk, since the API always returns the same number of records
+rsfirst = 0
+rssize = 1
+# facility number
+facility = 9
+
+[settings]
+# when to send a notification;
+# possible: ["always", "burger", "never"], where "burger" means only if the burger is available
+send = "always"
+# periods when no emails should be sent (e.g. holidays); date format: YYYYMMDD
+# write as intervals, e.g. "20241212/20241214" or dates, e.g. "20241212"
+quiet = [
+    "20241221/20250221",
+]

@@ -10,8 +10,19 @@ Get emails every morning to see if there are burgers at the ETH Polymensa.
 - `recipients` list of email addresses that should receive the emails
     - the email addresses are separated by commas, e.g. `burger@gmail.com,max@example.org`.
 
+**api, send settings**
+specified and explained in `config.toml`
+
 **timing**
 specified by the crontab in vercel.json
 
 **other**
 - [burgerBot image](https://unsplash.com/photos/photo-of-burger-with-tomato-and-cheese-OCHMcVOWRAU?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash)
+
+## tests
+All tests are in the `/test/` folder, in files ending in `_test.py`.
+To run the tests (using unittest), run
+
+```bash
+python3 -m unittest discover -s test -p "*.py"
+```
