@@ -15,3 +15,11 @@ specified by the crontab in vercel.json
 
 **other**
 - [burgerBot image](https://unsplash.com/photos/photo-of-burger-with-tomato-and-cheese-OCHMcVOWRAU?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash)
+
+## tests
+All tests are in the `/test/` folder, in files ending in `_test.py`.
+To run the tests (using unittest), run
+
+```bash
+python3 -m unittest discover -s test -p "*.py"
+```
