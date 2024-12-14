@@ -15,3 +15,8 @@ facility = 9
 # when to send a notification;
 # possible: ["always", "burger", "never"], where "burger" means only if the burger is available
 send = "always"
+# periods when no emails should be sent (e.g. holidays); date format: YYYYMMDD
+# write as intervals, e.g. "20241212/20241214" or dates, e.g. "20241212"
+quiet = [
+    "20241221/20250221",
+]
