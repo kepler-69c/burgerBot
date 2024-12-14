@@ -20,6 +20,11 @@ class DateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             is_quiet_date(datetime.date(2024, 12, 25), ["invalid_date"])
 
+    def test_is_empty_range(self):
+        self.assertFalse(is_quiet_date(datetime.date(2024, 12, 25), []))
+
+    def test_no_range(self):
+        self.assertFalse(is_quiet_date(datetime.date(2024, 12, 25), None))
 
 if __name__ == '__main__':
     unittest.main()

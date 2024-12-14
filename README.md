@@ -10,6 +10,9 @@ Get emails every morning to see if there are burgers at the ETH Polymensa.
 - `recipients` list of email addresses that should receive the emails
     - the email addresses are separated by commas, e.g. `burger@gmail.com,max@example.org`.
 
+**api, send settings**
+specified and explained in `config.toml`
+
 **timing**
 specified by the crontab in vercel.json
 
