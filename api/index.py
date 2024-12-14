@@ -5,7 +5,7 @@ import tomllib
 from dotenv import load_dotenv
 from helpers.fetch import Polymensa
 from helpers.sendmail import BurgerSend
-from helpers.datehandler import is_weekend
+from helpers.datehandler import is_weekend, is_quiet_date, today
 
 load_dotenv()
 app = Flask(__name__)
@@ -25,14 +25,20 @@ def send_email():
             config = tomllib.load(f)
         api = config["api"]
 
-        # don't send emails on weekends / if the send variable is "never"
+        # don't send emails on weekends / if the send variable is "never" / the date is in the quiet days list
+        if api["send"] == "never":
+            return jsonify({"status": "burgerBot is disabled"}), 200
         if is_weekend():
             return jsonify({"status": "It's the weekend, no burgers today!"}), 200
-        elif api["send"] == "never":
-            return jsonify({"status": "burgerBot is disabled"}), 200
+        if is_quiet_date(today(), config["settings"]["quiet_days"]):
+            return jsonify({"status": "today the burgerBot is quiet"}), 200
 
         mensa = Polymensa(**api)
         meals = mensa.get_dishes()
+
+        # don't send emails if there is no burger and the send variable is "burger"
+        if api["send"] == "burger" and not mensa.has_burger():
+            return jsonify({"status": "No burgers today!"}), 200
 
         mail = BurgerSend(email, password)
         mail.send(recipients, meals)
