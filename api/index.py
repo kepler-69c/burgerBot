@@ -1,10 +1,11 @@
 from flask import Flask, jsonify
 import os
 import json
-import datetime
+import tomllib
 from dotenv import load_dotenv
 from helpers.fetch import Polymensa
 from helpers.sendmail import BurgerSend
+from helpers.datehandler import is_weekend, is_quiet_date, today
 
 load_dotenv()
 app = Flask(__name__)
@@ -14,29 +15,31 @@ app = Flask(__name__)
 @app.route("/api")
 def send_email():
     try:
+        # environment variables
         email = os.getenv("EMAIL")
         password = os.getenv("PASSWORD")
         recipients = os.getenv("RECIPIENTS").split(",")
 
-        api = {
-            # id which indicates which eth service is requesting the data
-            "client_id": "ethz-wcms",  # TODO: am I allowed to use this id?
-            # language; possible: ["en", "de"]
-            "lang": "en",
-            # idk
-            "rsfirst": 0,
-            "rssize": 1,
-            # facility number
-            "facility": 9,
-        }
+        # api config
+        with open("config.toml", "rb") as f:
+            config = tomllib.load(f)
+        api = config["api"]
+        settings = config["settings"]
 
-        # don't send emails on weekends
-        weekday = datetime.date.today().weekday()
-        if weekday in [6,7]:
+        # don't send emails on weekends / if the send variable is "never" / the date is in the quiet days list
+        if settings.get("send") and settings["send"] == "never":
+            return jsonify({"status": "burgerBot is disabled"}), 200
+        if is_weekend():
             return jsonify({"status": "It's the weekend, no burgers today!"}), 200
+        if is_quiet_date(today(), config["settings"].get("quiet_days")):
+            return jsonify({"status": "today the burgerBot is quiet"}), 200
 
         mensa = Polymensa(**api)
         meals = mensa.get_dishes()
+
+        # don't send emails if there is no burger and the send variable is "burger"
+        if settings.get("send") and settings["send"] == "burger" and not mensa.has_burger():
+            return jsonify({"status": "No burgers today!"}), 200
 
         mail = BurgerSend(email, password)
         mail.send(recipients, meals)
