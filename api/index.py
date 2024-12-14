@@ -5,6 +5,7 @@ import datetime
 from dotenv import load_dotenv
 from helpers.fetch import Polymensa
 from helpers.sendmail import BurgerSend
+from helpers.datehandler import is_weekend
 
 load_dotenv()
 app = Flask(__name__)
@@ -23,7 +24,7 @@ def send_email():
             "client_id": "ethz-wcms",  # TODO: am I allowed to use this id?
             # language; possible: ["en", "de"]
             "lang": "en",
-            # idk
+            # idk, since the API always returns the same number of records
             "rsfirst": 0,
             "rssize": 1,
             # facility number
@@ -31,8 +32,7 @@ def send_email():
         }
 
         # don't send emails on weekends
-        weekday = datetime.date.today().weekday()
-        if weekday in [6,7]:
+        if is_weekend():
             return jsonify({"status": "It's the weekend, no burgers today!"}), 200
 
         mensa = Polymensa(**api)

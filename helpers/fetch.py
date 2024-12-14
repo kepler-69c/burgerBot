@@ -2,6 +2,7 @@ import requests
 import json
 import datetime
 from enum import Enum
+from helpers.datehandler import next_weekday
 
 
 class RequestState(Enum):
@@ -12,8 +13,8 @@ class RequestState(Enum):
 
 
 class Polymensa:
-    requestDay: str = None
-    requestNextDay: str = None
+    requestDayStart: str = None
+    requestDayEnd: str = None
     requestWeekday: str = None
     api: dict = None
     request = {
@@ -21,7 +22,6 @@ class Polymensa:
         "data": None
     }
     meals: dict = {}
-
 
     def __init__(self, client_id, lang, rsfirst, rssize, facility) -> None:
         self.api = {
@@ -31,29 +31,16 @@ class Polymensa:
             "rssize": rssize,
             "facility": facility
         }
-        self.week_date()
+
+        self.requestWeekday, self.requestDayStart, self.requestDayEnd = next_weekday()
         self.load_data()
 
-
-    def week_date(self) -> None:
-        today = datetime.date.today()
-        # if monday-friday return current day; else return next monday
-        if today.weekday() < 5:
-            self.requestDay = today
-            self.requestWeekday = today.weekday()
-            self.requestNextDay = today + datetime.timedelta(days=7)
-        # TODO: not needed anymore, since the script doesn't run on weekends
-        else:
-            daysUntilMonday = 7 - today.weekday()
-            self.requestDay = today + datetime.timedelta(days=daysUntilMonday)
-            self.requestWeekday = 0
-
-    
     def load_data(self) -> None:
         parameters = (f"client-id={self.api['client_id']}&lang={self.api['lang']}"
-                      f"&rs-first={self.api['rsfirst']}&rs-size={self.api['rssize']}"
+                      f"&rs-first={self.api['rsfirst']
+                                   }&rs-size={self.api['rssize']}"
                       # date in format "YYYY-MM-DD". The api always return the data for the whole week, so the dates are kind of irrelevant
-                      f"&valid-after={self.requestDay}&valid-before={self.requestNextDay}&facility={self.api['facility']}")
+                      f"&valid-after={self.requestDayStart}&valid-before={self.requestDayEnd}&facility={self.api['facility']}")
         url = "https://idapps.ethz.ch/cookpit-pub-services/v1/weeklyrotas?"+parameters
         response = requests.get(url)
 
@@ -62,7 +49,6 @@ class Polymensa:
             self.request["data"] = response.json()
         else:
             self.request["state"] = RequestState.ERROR
-
 
     def parse_data(self) -> None:
         # if there was an error, exit
@@ -87,7 +73,6 @@ class Polymensa:
 
         self.request["state"] = RequestState.PARSED
 
-
     def get_dishes(self) -> dict:
         # already parsed
         if self.request["state"] == RequestState.PARSED:
@@ -100,7 +85,7 @@ class Polymensa:
             self.parse_data()
             return self.meals
 
-    def has_burger(self, meal: str="Lunch") -> bool:
+    def has_burger(self, meal: str = "Lunch") -> bool:
         if self.request["state"] == RequestState.ERROR:
             return False
 
