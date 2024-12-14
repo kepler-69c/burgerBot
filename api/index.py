@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 import os
 import json
-import datetime
+import tomllib
 from dotenv import load_dotenv
 from helpers.fetch import Polymensa
 from helpers.sendmail import BurgerSend
@@ -15,25 +15,21 @@ app = Flask(__name__)
 @app.route("/api")
 def send_email():
     try:
+        # environment variables
         email = os.getenv("EMAIL")
         password = os.getenv("PASSWORD")
         recipients = os.getenv("RECIPIENTS").split(",")
 
-        api = {
-            # id which indicates which eth service is requesting the data
-            "client_id": "ethz-wcms",  # TODO: am I allowed to use this id?
-            # language; possible: ["en", "de"]
-            "lang": "en",
-            # idk, since the API always returns the same number of records
-            "rsfirst": 0,
-            "rssize": 1,
-            # facility number
-            "facility": 9,
-        }
+        # api config
+        with open("/config.toml", "r") as f:
+            config = tomllib.load(f)
+        api = config["api"]
 
-        # don't send emails on weekends
+        # don't send emails on weekends or if the send variable is "never"
         if is_weekend():
             return jsonify({"status": "It's the weekend, no burgers today!"}), 200
+        if api["send"] == "never":
+            return jsonify({"status": "burgerBot is disabled"}), 200
 
         mensa = Polymensa(**api)
         meals = mensa.get_dishes()
