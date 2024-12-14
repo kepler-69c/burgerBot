@@ -21,14 +21,14 @@ def send_email():
         recipients = os.getenv("RECIPIENTS").split(",")
 
         # api config
-        with open("/config.toml", "r") as f:
+        with open("config.toml", "rb") as f:
             config = tomllib.load(f)
         api = config["api"]
 
-        # don't send emails on weekends or if the send variable is "never"
+        # don't send emails on weekends / if the send variable is "never"
         if is_weekend():
             return jsonify({"status": "It's the weekend, no burgers today!"}), 200
-        if api["send"] == "never":
+        elif api["send"] == "never":
             return jsonify({"status": "burgerBot is disabled"}), 200
 
         mensa = Polymensa(**api)
