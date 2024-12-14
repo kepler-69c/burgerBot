@@ -34,6 +34,10 @@ def convert_date(date: str) -> datetime.date:
 
 
 def is_quiet_date(date: datetime.date, quiet_days: list[str]) -> bool:
+    # empty or no quiet days
+    if not quiet_days:
+        return False
+
     try:
         for period in quiet_days:
             if "/" in period: # date range
