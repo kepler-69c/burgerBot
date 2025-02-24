@@ -9,20 +9,20 @@ def is_weekend() -> bool:
     return today().weekday() in [5, 6]
 
 
-def next_weekday() -> (int, datetime.date, datetime.date):
+def next_weekday() -> tuple[int, datetime.date, datetime.date]:
     """
     if day in {monday-friday} return current day; else return next monday
     """
-    today = today()
-    weekday = today.weekday()
-    requestDayStart = today
-    requestDayEnd = today
+    currentDay = today()
+    weekday = currentDay.weekday()
+    requestDayStart = currentDay
+    requestDayEnd = currentDay
 
     if weekday < 5:
-        requestDayEnd = today + datetime.timedelta(days=7)
+        requestDayEnd = currentDay + datetime.timedelta(days=7)
     else:
         daysUntilMonday = 7 - weekday
-        requestDayStart = today + datetime.timedelta(days=daysUntilMonday)
+        requestDayStart = currentDay + datetime.timedelta(days=daysUntilMonday)
         requestDayEnd = requestDayStart + datetime.timedelta(days=7)
         weekday = 0
 
