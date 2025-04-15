@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 import os
 import json
 import tomllib
@@ -11,7 +11,6 @@ load_dotenv()
 app = Flask(__name__)
 
 
-#@app.route("/")
 @app.route("/api")
 def send_email():
     try:
@@ -50,11 +49,8 @@ def send_email():
         return jsonify({"error": str(e)}), 500
 
 
-#@app.route("/info")
-#@app.route("/api/info")
 @app.route("/")
 def hello():
-    return "Hello, World!", 200
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    with open("config.toml", "rb") as f:
+        config = tomllib.load(f)
+    return render_template("index.html", config=config)
