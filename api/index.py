@@ -11,7 +11,7 @@ load_dotenv()
 app = Flask(__name__)
 
 
-@app.route("/")
+#@app.route("/")
 @app.route("/api")
 def send_email():
     try:
@@ -50,8 +50,8 @@ def send_email():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/hello")
-@app.route("/api/hello")
+#@app.route("/")
+@app.route("/api/info")
 def hello():
     return "Hello, World!", 200
 
