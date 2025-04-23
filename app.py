@@ -30,7 +30,7 @@ def send_email():
             return jsonify({"status": "burgerBot is disabled"}), 200
         if is_weekend():
             return jsonify({"status": "It's the weekend, no burgers today!"}), 200
-        if is_quiet_date(today(), config["settings"].get("quiet_days")):
+        if is_quiet_date(today(), config["settings"].get("quiet")):
             return jsonify({"status": "today the burgerBot is quiet"}), 200
 
         mensa = Polymensa(**api)
