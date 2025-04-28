@@ -23,13 +23,20 @@ def add_email(address, sending="always") -> str:
     for doc in docs:
         data = doc.to_dict()
         if data.get("email") == address:
-            return data.get("token")
+            return doc.id
 
     # if not found, create new
     token = generate_token()
     db.collection("emails").document(token).set({"email": address, "sending": sending})
     return token
 
+
+def get_email(token) -> dict:
+    doc_ref = db.collection("emails").document(token)
+    doc = doc_ref.get()
+    if doc.exists:
+        return doc.to_dict()
+    return None
 
 def get_emails() -> dict:
     """
