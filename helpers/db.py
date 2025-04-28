@@ -14,12 +14,20 @@ def generate_token() -> str:
 
 def add_email(address, sending="always") -> str:
     """
-    add email to firestore db. if email already exists, it will be overwritten. returns token of the email record
+    adds a new email only if it doesn't already exist.
+    returns token of new/existing email
     """
+    # search all existing emails
+    emails_ref = db.collection("emails")
+    docs = emails_ref.stream()
+    for doc in docs:
+        data = doc.to_dict()
+        if data.get("email") == address:
+            return data.get("token")
+
+    # if not found, create new
     token = generate_token()
-    db.collection("emails").document(address).set(
-        {"sending": sending, "token": token}
-    )
+    db.collection("emails").document(token).set({"email": address, "sending": sending})
     return token
 
 
@@ -32,32 +40,27 @@ def get_emails() -> dict:
     return {doc.id: doc.to_dict() for doc in docs}
 
 
-def update_email_setting(address, new_sending, provided_token) -> bool:
+def update_settings(provided_token, new_sending) -> bool:
     """
     update email sending setting for an existing email. Return True if successful
     """
-    doc_ref = db.collection("emails").document(address)
+    doc_ref = db.collection("emails").document(provided_token)
     doc = doc_ref.get()
     if doc.exists:
-        data = doc.to_dict()
-        stored_token = data.get("token")
-        if stored_token == provided_token:
-            doc_ref.update({"sending": new_sending})
-            return True
+        doc_ref.update({"sending": new_sending})
+        return True
     return False
 
 
-def delete_email(address, provided_token) -> bool:
+def delete_email(provided_token) -> bool:
     """
     delete email record from firestore db. Return True if successful
     """
-    doc_ref = db.collection("emails").document(address)
+    doc_ref = db.collection("emails").document(provided_token)
     doc = doc_ref.get()
     if doc.exists:
-        data = doc.to_dict()
-        if data.get("token") == provided_token:
-            doc_ref.delete()
-            return True
+        doc_ref.delete()
+        return True
     return False
 
 

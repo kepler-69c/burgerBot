@@ -3,6 +3,8 @@ import os
 import json
 import tomllib
 from dotenv import load_dotenv
+
+from helpers.db import get_emails, update_email_setting
 from helpers.fetch import Polymensa
 from helpers.sendmail import BurgerSend
 from helpers.datehandler import is_weekend, is_quiet_date, today
@@ -54,3 +56,10 @@ def hello():
     with open("config.toml", "rb") as f:
         config = tomllib.load(f)
     return render_template("index.html", config=config)
+
+# @app.route("/settings/<token>")
+# def change(token):
+    # return render_template("change.html", token=token)
+
+@app.route("/api/change/<token>/<sending>", methods=["GET", "POST"])
+def change_settings(token, sending):
