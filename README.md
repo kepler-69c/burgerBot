@@ -7,10 +7,17 @@ Get emails every morning to see if there are burgers at the ETH Polymensa.
 **.env variables**
 - `email` email address from which the emails are sent
 - `password` password / app password of the email address
-- `recipients` list of email addresses that should receive the emails
-    - the email addresses are separated by commas, e.g. `burger@gmail.com,max@example.org`.
 
-**api, send settings**
+**recipients**
+stored in Google Firestore DB. See `helpers/db.py`. To access the DB, one must have a service account key file named `serviceAccountKey.json`.
+
+For vercel, the `.json` file with the credentials must be converted to base64 and stored in the environment variable `B64_FIREBASE_CREDENTIALS`. Convert with
+
+```bash
+base64 serviceAccountKey.json > key.b64
+```
+
+**api, settings**
 specified and explained in `config.toml`
 
 **timing**
