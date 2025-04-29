@@ -19,33 +19,43 @@ def send_email():
         # environment variables
         email = os.getenv("EMAIL")
         password = os.getenv("PASSWORD")
-        recipients = os.getenv("RECIPIENTS").split(",")
 
-        # api config
+        # config.toml variables
         with open("config.toml", "rb") as f:
             config = tomllib.load(f)
+        env = config["env"]
         api = config["api"]
         settings = config["settings"]
 
-        # don't send emails on weekends / if the send variable is "never" / the date is in the quiet days list
-        if settings.get("send") and settings["send"] == "never":
-            return jsonify({"status": "burgerBot is disabled"}), 200
+        # don't send emails on weekends / the date is in the quiet days list
+        if is_quiet_date(today(), settings.get("quiet")):
+            return jsonify({"status": "today the burgerBot is quiet"}), 200
         if is_weekend():
             return jsonify({"status": "It's the weekend, no burgers today!"}), 200
-        if is_quiet_date(today(), config["settings"].get("quiet")):
-            return jsonify({"status": "today the burgerBot is quiet"}), 200
 
+        # get data from polymensa, recipients from database
         mensa = Polymensa(**api)
         meals = mensa.get_dishes()
+        recipients = get_emails()
+        sent = 0
 
-        # don't send emails if there is no burger and the send variable is "burger"
-        if settings.get("send") and settings["send"] == "burger" and not mensa.has_burger():
-            return jsonify({"status": "No burgers today!"}), 200
+        # send email to every recipient, adhering to the settings and enviroment
+        mail = BurgerSend(email, password, meals, settings.get("url"))
+        for token, re in recipients.items():
+            # skip if dev environment
+            if env == "dev" and not re.get("development"):
+                print(f"skipping prod recipient { re.get("email") }")
+                continue
+            # skip if settings is "never" or "burger" and there is no burger
+            sending = re.get("sending")
+            if sending == "never" or sending == "burger" and not mensa.has_burger():
+                print(f"skipping recipient { re.get("email") } because of settings")
+                continue
+            # send email
+            mail.send(token, re)
+            sent += 1
 
-        mail = BurgerSend(email, password)
-        mail.send(recipients, meals)
-
-        return jsonify({"status": "Email sent successfully!", "meals": meals}), 200
+        return jsonify({"status": f"Email sent successfully to {sent} recipients!", "meals": meals}), 200
     except Exception as e:
         raise e
         return jsonify({"error": str(e)}), 500

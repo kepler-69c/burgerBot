@@ -27,7 +27,7 @@ def add_email(address, sending="always") -> str:
 
     # if not found, create new
     token = generate_token()
-    db.collection("emails").document(token).set({"email": address, "sending": sending})
+    db.collection("emails").document(token).set({"email": address, "sending": sending, "development": False})
     return token
 
 
