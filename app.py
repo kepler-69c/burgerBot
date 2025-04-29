@@ -2,6 +2,7 @@ from flask import Flask, jsonify, render_template
 import os
 import json
 import tomllib
+import logging
 from dotenv import load_dotenv
 
 from helpers.db import get_emails, update_settings, get_email
@@ -44,15 +45,16 @@ def send_email():
         for token, re in recipients.items():
             # skip if dev environment
             if env == "dev" and not re.get("development"):
-                print(f"skipping prod recipient { re.get("email") }")
+                logging.info(f"skipping dev recipient { re.get('email') }")
                 continue
             # skip if settings is "never" or "burger" and there is no burger
             sending = re.get("sending")
             if sending == "never" or sending == "burger" and not mensa.has_burger():
-                print(f"skipping recipient { re.get("email") } because of settings")
+                logging.info(f"skipping recipient { re.get("email") } because of settings")
                 continue
             # send email
             mail.send(token, re)
+            logging.info(f"sent email to { re.get('email') }")
             sent += 1
 
         return jsonify({"status": f"Email sent successfully to {sent} recipients!", "meals": meals}), 200
