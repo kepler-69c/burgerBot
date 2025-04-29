@@ -7,7 +7,8 @@ import json
 import os
 
 # load credentials from base64
-dotenv_path = os.path.join(os.path.dirname(__file__), "..", ".env")
+# dotenv_path = os.path.join(os.path.dirname(__file__), "..", ".env")
+dotenv_path = os.path.join(os.getcwd(), ".env")
 load_dotenv(dotenv_path)
 firebase_b64 = os.getenv("B64_FIREBASE_CREDENTIALS")
 if not firebase_b64:
