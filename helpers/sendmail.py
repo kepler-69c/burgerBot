@@ -1,6 +1,7 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from typing import Tuple
 
 
 class GmailSend:
@@ -23,14 +24,14 @@ class GmailSend:
         smtpserver.login(self.email, self.password)
         self.server = smtpserver
 
-    def send(self, to: list, email_text: str) -> (bool, dict):
+    def send(self, to: list, email_text: str) -> Tuple[bool, dict]:
         state = self.server.sendmail(self.email, to, email_text)
         if not state:
             return True, {}
         else:
             return False, state
 
-    def send_html(self, to: list, subject: str, email_text: str, email_html: str) -> (bool, dict):
+    def send_html(self, to: list, subject: str, email_text: str, email_html: str) -> Tuple[bool, dict]:
         # https://stackoverflow.com/a/882770/16490381
         msg = MIMEMultipart('alternative')
         msg['Subject'] = subject
@@ -55,14 +56,18 @@ class GmailSend:
 class BurgerSend(GmailSend):
     has_burger: bool = False
     burger: dict = None
+    meals: dict = None
+    current_url: str = None
 
-    def __init__(self, email: str, password: str) -> None:
+    def __init__(self, email: str, password: str, meals: dict, current_url: str = None) -> None:
         super().__init__(email, password)
+        self.meals = meals
+        self.current_url = current_url
 
-    def send(self, to: list, meals: dict) -> (bool, dict):
+    def send(self, token: str, recipient: dict) -> Tuple[bool, dict]:
         dishes = ""
         # we're only interested in the lunch
-        for dish in meals["Lunch"]:
+        for dish in self.meals["Lunch"]:
             name = dish["name"].lower()
             if "burgers" in name or "burger" in name:
                 self.has_burger = True
@@ -81,11 +86,19 @@ class BurgerSend(GmailSend):
             <ul>
                 {dishes}
             </ul>
+            <p>
+                <small>
+                    change notifications to
+                    <a href="{self.current_url}/api/change/{token}/always">always</a> - 
+                    <a href="{self.current_url}/api/change/{token}/never">never</a> - 
+                    <a href="{self.current_url}/api/change/{token}/burger">burger only</a>
+                </small>
+            </p>
         </body>
         </html>
         """
         # return html
-        return super().send_html(to, "Polymensa", "", html)
+        return super().send_html([recipient["email"]], "Polymensa", "", html)
 
     def _title(self) -> str:
         if self.has_burger:

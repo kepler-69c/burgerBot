@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BurgerBot</title>
+</head>
+<body>
+  <h2>BurgerBot - notifications</h2>
+  {% if found %}
+  <p>Changed notification condition of email <b>{{ email }}</b> to {{ setting }}.</p>
+  {% else %}
+  <p>Sorry, could not find email with token <b>{{ token }}</b>.</p>
+  {% endif %}
+</body>
+</html>
