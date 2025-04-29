@@ -1,9 +1,23 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
+from dotenv import load_dotenv
 import secrets
+import base64
+import json
+import os
+
+# load credentials from base64
+dotenv_path = os.path.join(os.path.dirname(__file__), "..", ".env")
+load_dotenv(dotenv_path)
+firebase_b64 = os.getenv("B64_FIREBASE_CREDENTIALS")
+if not firebase_b64:
+    raise RuntimeError("Missing B64_FIREBASE_CREDENTIALS env var")
+firebase_json = json.loads(base64.b64decode(firebase_b64))
+# alternatively (on local):
+# firebase_json = "serviceAccountKey.json"
 
 # Initialize Firebase (only ONCE)
-cred = credentials.Certificate("serviceAccountKey.json")
+cred = credentials.Certificate(firebase_json)
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
