@@ -1,5 +1,5 @@
 
-env = "dev" # or "prod"
+env = "prod" # or "env"
 
 [api]
 # id which indicates which ETHZ service is requesting the data
