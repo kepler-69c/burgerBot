@@ -7,15 +7,15 @@
     ],
     "routes": [
         {
+            "src": "/api/change/(.*)/(.*)",
+            "dest": "app.py"
+        },
+        {
             "src": "/api",
             "dest": "app.py"
         },
         {
             "src": "/",
-            "dest": "app.py"
-        },
-        {
-            "src": "/api/change/(:token)/(:sending)",
             "dest": "app.py"
         }
     ],
