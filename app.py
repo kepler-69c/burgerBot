@@ -10,6 +10,8 @@ from helpers.fetch import Polymensa
 from helpers.sendmail import BurgerSend
 from helpers.datehandler import is_weekend, is_quiet_date, today
 
+logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s')
+
 load_dotenv()
 app = Flask(__name__)
 
@@ -37,20 +39,21 @@ def send_email():
         # get data from polymensa, recipients from database
         mensa = Polymensa(**api)
         meals = mensa.get_dishes()
+        has_burger, _ = mensa.has_burger()
         recipients = get_emails()
         sent = 0
 
         # send email to every recipient, adhering to the settings and enviroment
-        mail = BurgerSend(email, password, meals, settings.get("url"))
+        mail = BurgerSend(email, password, mensa, settings.get("url"))
         for token, re in recipients.items():
             # skip if dev environment
             if env == "dev" and not re.get("development"):
-                logging.info(f"skipping dev recipient { re.get('email') }")
+                logging.info(f"skipping prod recipient { re.get('email') }")
                 continue
             # skip if settings is "never" or "burger" and there is no burger
             sending = re.get("sending")
-            if sending == "never" or sending == "burger" and not mensa.has_burger():
-                logging.info(f"skipping recipient { re.get("email") } because of settings")
+            if sending == "never" or (sending == "burger" and not has_burger):
+                logging.info(f"skipping recipient { re.get("email") } because of settings: (sending:{ sending }), (burger: { has_burger })")
                 continue
             # send email
             mail.send(token, re)
@@ -59,7 +62,7 @@ def send_email():
 
         return jsonify({"status": f"Email sent successfully to {sent} recipients!", "meals": meals}), 200
     except Exception as e:
-        raise e
+        logging.error(f"Error sending email: {e}")
         return jsonify({"error": str(e)}), 500
 
 

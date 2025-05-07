@@ -3,6 +3,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from typing import Tuple
 
+from helpers.fetch import Polymensa
 
 class GmailSend:
     email: str = None
@@ -56,24 +57,25 @@ class GmailSend:
 class BurgerSend(GmailSend):
     has_burger: bool = False
     burger: dict = None
-    meals: dict = None
+    mensa: Polymensa = None
     current_url: str = None
 
-    def __init__(self, email: str, password: str, meals: dict, current_url: str = None) -> None:
+    def __init__(self, email: str, password: str, mensa: Polymensa, current_url: str = None) -> None:
         super().__init__(email, password)
-        self.meals = meals
+        self.mensa = mensa
         self.current_url = current_url
 
     def send(self, token: str, recipient: dict) -> Tuple[bool, dict]:
         dishes = ""
         # we're only interested in the lunch
-        for dish in self.meals["Lunch"]:
-            name = dish["name"].lower()
-            if "burgers" in name or "burger" in name:
-                self.has_burger = True
-                self.burger = dish
-            else:
-                dishes += self._dish_card(dish)
+        has_burger, burger = self.mensa.has_burger("Lunch")
+        if has_burger:
+            self.has_burger = True
+            self.burger = burger
+        for dish in self.mensa.get_dishes()["Lunch"]:
+            if dish == self.burger:
+                continue
+            dishes += self._dish_card(dish)
 
         html = f"""
         <!DOCTYPE html>

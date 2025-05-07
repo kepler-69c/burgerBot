@@ -3,7 +3,7 @@ import json
 import datetime
 from enum import Enum
 from helpers.datehandler import next_weekday
-
+from typing import Tuple
 
 class RequestState(Enum):
     LOADING = 0
@@ -85,16 +85,21 @@ class Polymensa:
             self.parse_data()
             return self.meals
 
-    def has_burger(self, meal: str = "Lunch") -> bool:
+    def has_burger(self, meal: str = "Lunch") -> Tuple[bool, dict]:
+        """
+        returns bool+dish if there is a burger in the dish list
+
+        if there is no burger, returns (False, None)
+        """
         if self.request["state"] == RequestState.ERROR:
-            return False
+            return False, None
 
         if meal not in ["Lunch", "Dinner"]:
-            return False
+            return False, None
 
         for m in self.meals[meal]:
-            for b in ["Burger", "burger"]:
-                if b in m["name"]:
-                    return True
+            meal = m["name"].lower()
+            if "burger" in meal:
+                return True, m
 
         return False
