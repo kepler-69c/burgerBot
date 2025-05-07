@@ -48,7 +48,7 @@ def send_email():
         for token, re in recipients.items():
             # skip if dev environment
             if env == "dev" and not re.get("development"):
-                logging.info(f"skipping dev recipient { re.get('email') }")
+                logging.info(f"skipping prod recipient { re.get('email') }")
                 continue
             # skip if settings is "never" or "burger" and there is no burger
             sending = re.get("sending")
@@ -62,7 +62,7 @@ def send_email():
 
         return jsonify({"status": f"Email sent successfully to {sent} recipients!", "meals": meals}), 200
     except Exception as e:
-        raise e
+        logging.error(f"Error sending email: {e}")
         return jsonify({"error": str(e)}), 500
 
 
